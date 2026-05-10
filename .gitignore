@@ -1,0 +1,28 @@
+# ドキュメント・ナレッジ（各自のローカルで管理）
+docs/*
+!docs/.gitkeep
+knowledge/*
+!knowledge/.gitkeep
+
+# macOS
+.DS_Store
+
+# Editor
+*.swp
+*.swo
+*~
+
+# Node (uvx may create cache)
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Environment
+.env
+.env.local
+
+# Kiro local settings (keep mcp.json tracked)
+.kiro/settings/auth.json

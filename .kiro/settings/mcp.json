@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "markitdown": {
+      "command": "uvx",
+      "args": [
+        "markitdown-mcp"
+      ],
+      "autoApprove": [
+        "convert_to_markdown"
+      ]
+    }
+  }
+}
