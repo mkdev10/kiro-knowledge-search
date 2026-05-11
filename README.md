@@ -67,22 +67,48 @@ Kiro のチャットで `/knowledge-search` スキルを呼び出し、自然言
 | プレゼンテーション | `.pptx`                           |
 | スプレッドシート   | `.xlsx`, `.xls`, `.csv`           |
 | Web・構造化データ  | `.html`, `.json`, `.xml`, `.rss`  |
-| メディア           | 画像（EXIF/OCR）, `.wav`, `.mp3`  |
 | その他             | `.epub`, `.ipynb`, `.zip`, `.msg` |
+
+## 全体アーキテクチャ
+
+```mermaid
+flowchart TB
+    User([ユーザー])
+    Chat[Kiro チャット]
+    User --> Chat
+    Chat -->|/knowledge-search| SearchSkill[knowledge-search<br/>スキル]
+    Chat -->|/knowledge-build| BuildSkill[knowledge-build<br/>スキル]
+    SearchSkill -->|参照して回答| KB[(knowledge/<br/>ナレッジベース<br/>INDEX.md + *.md)]
+    BuildSkill -->|並列で呼び出し| Converter[doc-converter<br/>サブエージェント]
+    Converter -->|変換依頼| MCP[markitdown MCP]
+    MCP -->|読み込み| Docs[(docs/<br/>元ドキュメント)]
+    Converter -->|保存| KB
+    Rules[/"conversion-rules.md<br/>変換ルール"/]
+    BuildSkill -.参照.-> Rules
+    Converter -.参照.-> Rules
+    Steering[/"system-guide.md<br/>ステアリング・常時有効"/]
+    Steering -.参照.-> Chat
+    classDef ref fill:#fff8e1,stroke:#f0a500,color:#333
+    classDef store fill:#f0fff0,stroke:#4caf50,color:#333
+    classDef user fill:#e8f4ff,stroke:#4a90e2,color:#333
+    class Rules,Steering ref
+    class KB,Docs store
+    class User user
+```
 
 ## 仕組み
 
 ```mermaid
 flowchart LR
-    A[docs/ にファイル配置] --> B[/knowledge-build スキル]
-    B --> C[doc-converter サブエージェント]
-    C --> D[markitdown MCP]
-    D --> E[knowledge/ に Markdown 保存]
-    E --> F[INDEX.md 更新]
-    G[ユーザーの質問] --> H[/knowledge-search スキル]
-    H --> I[INDEX.md 参照]
-    I --> J[関連ファイル読み込み]
-    J --> K[根拠付き回答]
+    A["docs/ にファイル配置"] --> B["/knowledge-build スキル"]
+    B --> C["doc-converter サブエージェント"]
+    C --> D["markitdown MCP"]
+    D --> E["knowledge/ に Markdown 保存"]
+    E --> F["INDEX.md 更新"]
+    G["ユーザーの質問"] --> H["/knowledge-search スキル"]
+    H --> I["INDEX.md 参照"]
+    I --> J["関連ファイル読み込み"]
+    J --> K["根拠付き回答"]
 ```
 
 ## ライセンス
